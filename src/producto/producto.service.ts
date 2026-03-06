@@ -4,6 +4,7 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { Producto } from './entities/producto.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { HttpException } from '@nestjs/common';
 
 @Injectable()
 export class ProductoService {
@@ -21,12 +22,7 @@ export class ProductoService {
       return producto;
 
     } catch (error) {
-      // Este error es de MongoDB cuando se viola una restricción de unicidad (por ejemplo, nombre único)
-      if (error.code === 11000) {
-        throw new BadRequestException(`Ya hay un producto con ese nombre ${JSON.stringify(error.keyValue)}`);
-      }
-      console.log(error)
-      throw new InternalServerErrorException(`Error al crear el producto - ${error.message}`);
+      this.handleExceptions(error, 'create');
     }
   }
 
@@ -46,11 +42,50 @@ export class ProductoService {
     return producto;
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  async update(id: string, updateProductoDto: UpdateProductoDto) {
+
+    if (!isValidObjectId(id)) {
+          throw new BadRequestException(`El id ${id} no es válido`);
+        }
+      try {
+        if (updateProductoDto.nombre){
+          updateProductoDto.nombre = updateProductoDto.nombre.toLocaleLowerCase();
+        }
+        const productoActualizado = await this.productoModel.findByIdAndUpdate(id, updateProductoDto, {new: true, runValidators: true})
+        if (!productoActualizado) {
+          throw new NotFoundException(`El producto con id ${id} no fue encontrado`);
+        }
+        return productoActualizado;
+        
+      } catch (error) {
+        this.handleExceptions(error, 'update');
+        }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
+  async remove(id: string) {
+    if (!isValidObjectId(id)) {
+          throw new BadRequestException(`El id ${id} no es válido`);
+        }
+    try {
+      const productoAEliminar = await this.productoModel.findByIdAndDelete(id)
+      if (!productoAEliminar){
+        throw new NotFoundException(`El producto con id ${id} no fue encontrado`)
+      }
+      return {message: `Producto con id ${id} eliminado correctamente`, productoAEliminar};
+    } catch (error) {
+        this.handleExceptions(error, 'remove');
+    }
+  }
+
+  // Metodo reutilizable para manejar excepciones en los métodos como update y remove, recibe el error y el nombre del método para loguear mejor el error
+  private handleExceptions(error: any, metodo: string) {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    if (error.code === 11000) {
+      throw new BadRequestException(`Ya existe un producto con ese nombre.`);
+    }
+    console.log(`Error en método ${metodo}:`, error);
+    throw new InternalServerErrorException(`Error inesperado al usar el método ${metodo} con el producto. Revisa los logs.`);
   }
 }
