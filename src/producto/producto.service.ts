@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { Producto } from './entities/producto.entity';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -12,6 +12,7 @@ export class ProductoService {
     console.log('ProductoService initialized');
   }
 
+  //Metodo para crear un nuevo producto, recibe un DTO con los datos del producto a crear
   async create(createProductoDto: CreateProductoDto) {
     createProductoDto.nombre = createProductoDto.nombre.toLowerCase();
 
@@ -20,6 +21,7 @@ export class ProductoService {
       return producto;
 
     } catch (error) {
+      // Este error es de MongoDB cuando se viola una restricción de unicidad (por ejemplo, nombre único)
       if (error.code === 11000) {
         throw new BadRequestException(`Ya hay un producto con ese nombre ${JSON.stringify(error.keyValue)}`);
       }
@@ -32,8 +34,16 @@ export class ProductoService {
     return `This action returns all producto`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  async findOne(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`El id ${id} no es un ID válido de MongoDB`);
+    }
+    const producto = await this.productoModel.findById(id);
+
+    if (!producto) {
+      throw new NotFoundException(`El producto con id ${id} no fue encontrado`);
+    }
+    return producto;
   }
 
   update(id: number, updateProductoDto: UpdateProductoDto) {

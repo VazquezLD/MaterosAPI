@@ -8,6 +8,8 @@ export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
 
   @Post()
+  // Para cambiar el status code se usa @HttpCode(code) que se importa de @nestjs/common
+  // Tambien se puede usar HttpStatus de @nestjs/common para no usar numeros si no enums
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.productoService.create(createProductoDto);
   }
@@ -19,7 +21,7 @@ export class ProductoController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productoService.findOne(+id);
+    return this.productoService.findOne(id);
   }
 
   @Patch(':id')
