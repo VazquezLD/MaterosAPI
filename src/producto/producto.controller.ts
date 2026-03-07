@@ -26,12 +26,17 @@ export class ProductoController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseMongoIdPipe) id: string, @Body() updateProductoDto: UpdateProductoDto) {
+  update(@Param('id', ParseMongoIdPipe) id: string, @Body() updateProductoDto: UpdateProductoDto) {
     return this.productoService.update(id, updateProductoDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.productoService.remove(id);
+  }
+
+  @Delete()
+  removeAll(){
+    return this.productoService.deleteAll()
   }
 }

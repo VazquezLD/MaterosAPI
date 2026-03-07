@@ -9,6 +9,7 @@ import { Producto, ProductoSchema } from './entities/producto.entity';
   providers: [ProductoService],
   imports: [
     MongooseModule.forFeature([{ name: Producto.name, schema: ProductoSchema }])
-  ]
+  ],
+  exports: [MongooseModule]
 })
 export class ProductoModule {}

@@ -30,13 +30,22 @@ export class ProductoService {
 
   async findAll() {
     try {
-      const productos = await this.productoModel.find()
+      const productos = await this.productoModel.find().limit(10)
       if (productos.length === 0){
         throw new NotFoundException('No hay productos todavia.')
       }
       return productos;
     } catch (error) {
       this.handleExceptions(error, 'findAll');
+    }
+  }
+
+  async deleteAll() {
+    try {
+        await this.productoModel.deleteMany({})
+        return {message: "Productos eliminados satisfactoriamente"}
+    } catch (error) {
+        this.handleExceptions(error, 'deleteAll')
     }
   }
 
@@ -50,8 +59,8 @@ export class ProductoService {
     return producto;
   }
 
+ // Este metodo actualiza cualquier cantidad de atributos del objeto, sea 1 o todos
   async update(id: string, updateProductoDto: UpdateProductoDto) {
-    
       try {
         if (updateProductoDto.nombre){
           updateProductoDto.nombre = updateProductoDto.nombre.toLocaleLowerCase();
