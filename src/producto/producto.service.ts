@@ -15,7 +15,9 @@ export class ProductoService {
 
   //Metodo para crear un nuevo producto, recibe un DTO con los datos del producto a crear
   async create(createProductoDto: CreateProductoDto) {
-    createProductoDto.nombre = createProductoDto.nombre.toLowerCase();
+    if (createProductoDto.nombre) {
+      createProductoDto.nombre = createProductoDto.nombre.toLowerCase();
+    }
 
     try {
       const producto = await this.productoModel.create(createProductoDto);
@@ -26,14 +28,20 @@ export class ProductoService {
     }
   }
 
-  findAll() {
-    return `This action returns all producto`;
+  async findAll() {
+    try {
+      const productos = await this.productoModel.find()
+      if (productos.length === 0){
+        throw new NotFoundException('No hay productos todavia.')
+      }
+      return productos;
+    } catch (error) {
+      this.handleExceptions(error, 'findAll');
+    }
   }
 
+  //Metodo para buscar un producto por MongoID
   async findOne(id: string) {
-    if (!isValidObjectId(id)) {
-      throw new BadRequestException(`El id ${id} no es un ID válido de MongoDB`);
-    }
     const producto = await this.productoModel.findById(id);
 
     if (!producto) {
@@ -43,10 +51,7 @@ export class ProductoService {
   }
 
   async update(id: string, updateProductoDto: UpdateProductoDto) {
-
-    if (!isValidObjectId(id)) {
-          throw new BadRequestException(`El id ${id} no es válido`);
-        }
+    
       try {
         if (updateProductoDto.nombre){
           updateProductoDto.nombre = updateProductoDto.nombre.toLocaleLowerCase();
@@ -62,10 +67,8 @@ export class ProductoService {
         }
   }
 
+  //Este metodo hace Hard Delete, cuidado
   async remove(id: string) {
-    if (!isValidObjectId(id)) {
-          throw new BadRequestException(`El id ${id} no es válido`);
-        }
     try {
       const productoAEliminar = await this.productoModel.findByIdAndDelete(id)
       if (!productoAEliminar){

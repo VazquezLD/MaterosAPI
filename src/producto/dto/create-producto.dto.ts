@@ -1,4 +1,5 @@
-import {IsInt, IsPositive, IsString, Min, MinLength, IsBoolean, IsUrl} from 'class-validator';
+import {IsInt, IsPositive, IsString, Min, MinLength, IsBoolean, IsUrl, IsEnum, IsNotEmpty} from 'class-validator';
+import { CategoriaProducto } from '../entities/categoria.enum';
 
 export class CreateProductoDto {
     @IsString()
@@ -17,8 +18,11 @@ export class CreateProductoDto {
     @Min(0)
     stock: number;
 
-    @IsString()
-    categoria: string;
+    @IsNotEmpty()
+    @IsEnum(CategoriaProducto, {
+    message: `La categoría debe ser una de las siguientes: ${Object.values(CategoriaProducto).join(', ')}`
+  })
+    categoria: CategoriaProducto;
 
     @IsUrl()
     imagenUrl: string;
