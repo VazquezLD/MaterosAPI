@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
 @Controller('producto')
 export class ProductoController {
@@ -16,8 +17,8 @@ export class ProductoController {
   }
 
   @Get()
-  findAll() {
-    return this.productoService.findAll();
+  findAll( @Query() paginationDTO: PaginationDTO) {
+    return this.productoService.findAll(paginationDTO);
   }
 
   @Get(':id')

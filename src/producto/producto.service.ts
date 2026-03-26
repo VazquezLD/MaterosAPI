@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { isValidObjectId, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { Producto } from './entities/producto.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { HttpException } from '@nestjs/common';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
+
 
 @Injectable()
 export class ProductoService {
@@ -28,9 +30,10 @@ export class ProductoService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDTO: PaginationDTO) {
+    const { limit=10, offset=0 } = paginationDTO;
     try {
-      const productos = await this.productoModel.find().limit(10)
+      const productos = await this.productoModel.find().limit(limit).skip(offset).select('-__v')
       if (productos.length === 0){
         throw new NotFoundException('No hay productos todavia.')
       }
