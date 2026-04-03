@@ -1,26 +1,44 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Materos Backend - Tienda de Mates
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend desarrollado con NestJS para una tienda online de mates, termos, yerba y accesorios.
 
-# Ejecutar
+## Instalación
+
 1. Clonar repositorio
-2. Ejecutar el siguiente comando
-```
+2. Instalar dependencias:
+```bash
 npm install
 ```
-3. Instalar Nest CLI
-```
-npm i -g @nestjs/cli 
-```
-4. Levantar base de datos
-```
+3. Levantar base de datos (requiere Docker):
+```bash
 docker-compose up -d
 ```
+4. Iniciar en modo desarrollo:
+```bash
+npm run start:dev
+```
+
+## Endpoints Principales
+
+### Productos (`/api/v1/producto`)
+- `GET /producto`: Lista productos.
+  - Query Params opcionales: `limit`, `offset`, `categoria`, `search`.
+- `GET /producto/:id`: Busca un producto por ID.
+- `POST /producto`: Crea un producto (Admin).
+- `PATCH /producto/:id`: Actualiza un producto.
+- `DELETE /producto/:id`: Elimina un producto.
+
+### Pedidos (`/api/v1/pedido`)
+- `POST /pedido`: Realiza un pedido (Automáticamente reduce stock).
+- `GET /pedido`: Lista todos los pedidos (Admin).
+- `GET /pedido/:id`: Detalle de un pedido.
+- `PATCH /pedido/:id/status`: Cambia el estado del pedido (Admin).
+
+### Semilla (`/api/v1/seed`)
+- `GET /seed`: Borra la base de datos y carga datos de prueba iniciales.
 
 ## Stack usado
-* MongoDB
 * NestJS
+* MongoDB (Mongoose)
 * Docker
+* Class Validator & Transformer

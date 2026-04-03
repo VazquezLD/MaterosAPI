@@ -31,11 +31,30 @@ export class ProductoService {
   }
 
   async findAll(paginationDTO: PaginationDTO) {
-    const { limit=10, offset=0 } = paginationDTO;
+    const { limit = 10, offset = 0, categoria, search, minPrice, maxPrice, sort } = paginationDTO;
+    
+    const query: any = { activo: true };
+    if (categoria) {
+      query.categoria = categoria;
+    }
+    if (search) {
+      query.nombre = { $regex: search.toLowerCase(), $options: 'i' };
+    }
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      query.precio = {};
+      if (minPrice !== undefined) query.precio.$gte = minPrice;
+      if (maxPrice !== undefined) query.precio.$lte = maxPrice;
+    }
+
     try {
-      const productos = await this.productoModel.find().limit(limit).skip(offset).select('-__v')
-      if (productos.length === 0){
-        throw new NotFoundException('No hay productos todavia.')
+      const productos = await this.productoModel.find(query)
+        .limit(limit)
+        .skip(offset)
+        .select('-__v')
+        .sort(sort ? { precio: sort === 'asc' ? 1 : -1 } : { nombre: 1 });
+
+      if (productos.length === 0) {
+        throw new NotFoundException('No se encontraron productos con esos criterios.');
       }
       return productos;
     } catch (error) {

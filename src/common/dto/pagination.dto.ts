@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional, IsPositive, Min } from "class-validator"
+import { IsEnum, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator"
+import { CategoriaProducto } from "src/producto/entities/categoria.enum";
 
 export class PaginationDTO  {
 
@@ -12,4 +13,26 @@ export class PaginationDTO  {
     @IsNumber()
     @IsOptional()
     offset?: number;
-    }
+
+    @IsOptional()
+    @IsEnum(CategoriaProducto)
+    categoria?: CategoriaProducto;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    minPrice?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    maxPrice?: number;
+
+    @IsOptional()
+    @IsString()
+    sort?: 'asc' | 'desc';
+}
