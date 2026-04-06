@@ -1,0 +1,358 @@
+{
+	"info": {
+		"_postman_id": "8d3e5b1c-7f2a-4c9d-9e6b-1234567890ab",
+		"name": "Materos API 🧉",
+		"description": "Colección completa para probar el backend de la tienda de productos de mate. Incluye autenticación, catálogo, pedidos y semillas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@materos.com\",\n    \"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@materos.com\",\n    \"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/check",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Find All (con filtros)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/producto?limit=10&offset=0&categoria=mates&search=imperial&minPrice=1000&maxPrice=50000&sort=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"producto"
+							],
+							"query": [
+								{ "key": "limit", "value": "10" },
+								{ "key": "offset", "value": "0" },
+								{ "key": "categoria", "value": "mates" },
+								{ "key": "search", "value": "imperial" },
+								{ "key": "minPrice", "value": "1000" },
+								{ "key": "maxPrice", "value": "50000" },
+								{ "key": "sort", "value": "desc" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/producto/ID_AQUÍ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"producto",
+								"ID_AQUÍ"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Producto (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Mate Imperial Premium\",\n    \"precio\": 45000,\n    \"descripcion\": \"Mate de calabaza forrado en cuero con virola de alpaca\",\n    \"stock\": 20,\n    \"categoria\": \"mates\",\n    \"imagenUrl\": \"https://link.com/imagen.jpg\",\n    \"activo\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/producto",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"producto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Producto (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"precio\": 48000,\n    \"stock\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/producto/ID_AQUÍ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"producto",
+								"ID_AQUÍ"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Producto (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/producto/ID_AQUÍ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"producto",
+								"ID_AQUÍ"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos",
+			"item": [
+				{
+					"name": "Crear Pedido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cliente\": {\n        \"nombre\": \"Juan Pérez\",\n        \"email\": \"juan.perez@example.com\",\n        \"telefono\": \"1122334455\",\n        \"direccion\": \"Av. Siempre Viva 123\"\n    },\n    \"items\": [\n        {\n            \"producto\": \"ID_PRODUCTO_AQUÍ\",\n            \"cantidad\": 2\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pedido",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pedido"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pedidos (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pedido",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pedido"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simular Pago (Webhook)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pedido/ID_PEDIDO_AQUÍ/webhook-payment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pedido",
+								"ID_PEDIDO_AQUÍ",
+								"webhook-payment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Seed",
+			"item": [
+				{
+					"name": "Cargar Base de Datos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/seed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"seed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "PEGAR_TOKEN_AQUÍ",
+			"type": "string"
+		}
+	]
+}
